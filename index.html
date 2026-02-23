@@ -1,0 +1,1229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Slovacademy – Student Portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold:#C9A84C; --gold-light:#E8C97A; --gold-dim:#8C7235; --gold-bg:#FEF9EC;
+  --navy:#0F1923; --navy-mid:#182636; --navy-light:#1E3048;
+  --cream:#FAF6EE; --cream-dark:#F0E9D8;
+  --text:#1A1A2E; --muted:#6B7280; --light:#9CA3AF;
+  --ok:#22C55E; --err:#EF4444; --warn:#F59E0B;
+  --white:#FFF; --border:#E5DDD0;
+  --sh:0 4px 24px rgba(15,25,35,.10); --shl:0 12px 48px rgba(15,25,35,.18);
+  --r:12px; --rs:8px;
+  --df:'Playfair Display',Georgia,serif; --db:'DM Sans',system-ui,sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--db);background:var(--cream);color:var(--text);min-height:100vh;line-height:1.6}
+button{cursor:pointer;border:none;background:none;font-family:inherit}
+input{font-family:inherit;outline:none}
+.page{display:none;min-height:100vh;animation:fi .3s ease}
+.page.active{display:block}
+@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── AUTH ── */
+.auth-wrap{min-height:100vh;display:flex;background:linear-gradient(135deg,var(--navy) 0%,var(--navy-mid) 60%,#0D2235 100%);position:relative;overflow:hidden}
+.auth-wrap::before{content:'';position:absolute;inset:0;pointer-events: none;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23C9A84C' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/svg%3E")}
+.auth-left{flex:1;display:flex;align-items:center;justify-content:center;padding:48px;position:relative}
+.auth-left-inner{max-width:440px;width:100%}  
+.alogo{display:flex;align-items:center;gap:14px;margin-bottom:52px}
+.alogo-icon{width:54px;height:54px;background:linear-gradient(135deg,var(--gold),var(--gold-dim));border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;box-shadow:0 8px 24px rgba(201,168,76,.35)}
+.alogo h1{font-family:var(--df);font-size:22px;font-weight:700;color:#fff;letter-spacing:.5px}
+.alogo p{font-size:11px;color:rgba(255,255,255,.45);letter-spacing:2px;text-transform:uppercase}
+.auth-tag h2{font-family:var(--df);font-size:40px;font-weight:700;line-height:1.15;margin-bottom:12px;color:#fff}
+.auth-tag h2 span{color:var(--gold-light)}
+.auth-tag p{color:rgba(255,255,255,.5);font-size:15px;line-height:1.8}
+.auth-badges{display:flex;gap:12px;margin-top:32px}
+.abadge{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:14px 18px;color:rgba(255,255,255,.7);font-size:13px;display:flex;align-items:center;gap:8px}
+.abadge span{font-size:18px}
+
+.auth-right{width:480px;background:var(--white);display:flex;align-items:center;justify-content:center;padding:52px;box-shadow:-20px 0 60px rgba(0,0,0,.25)}
+.auth-card{width:100%}
+.auth-card h3{font-family:var(--df);font-size:26px;font-weight:700;margin-bottom:4px}
+.auth-card .sub{color:var(--muted);font-size:14px;margin-bottom:30px}
+.fg{margin-bottom:18px}
+.fg label{display:block;font-size:13px;font-weight:600;margin-bottom:6px;color:var(--text)}
+.fc{width:100%;padding:12px 15px;border:1.5px solid var(--border);border-radius:var(--rs);font-size:14px;background:var(--cream);transition:.2s}
+.fc:focus{border-color:var(--gold);background:#fff;box-shadow:0 0 0 3px rgba(201,168,76,.12)}
+.fc.err{border-color:var(--err);background:#FEF2F2}
+.frow{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px}
+.cb{display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer;color:var(--muted)}
+.cb input{width:15px;height:15px;accent-color:var(--gold)}
+.gl{color:var(--gold);font-size:13px;font-weight:600;cursor:pointer;transition:.15s}
+.gl:hover{color:var(--gold-dim);text-decoration:underline}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:13px 22px;border-radius:var(--rs);font-size:14px;font-weight:600;transition:.2s;cursor:pointer;border:none;letter-spacing:.3px}
+.btn-p{background:linear-gradient(135deg,var(--gold),var(--gold-dim));color:#fff;box-shadow:0 4px 16px rgba(201,168,76,.35);width:100%}
+.btn-p:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(201,168,76,.45)}
+.btn-g{background:transparent;border:1.5px solid var(--border);color:var(--muted);width:100%;margin-top:10px}
+.btn-g:hover{border-color:var(--gold);color:var(--gold-dim)}
+.btn-sm{padding:8px 16px;font-size:13px}
+.btn-ok{background:#DCFCE7;color:#16A34A;border:1.5px solid #BBF7D0}
+.btn-ok:hover{background:#16A34A;color:#fff}
+.ale-err{background:#FEF2F2;border:1px solid #FECACA;border-radius:var(--rs);padding:12px 15px;font-size:13px;color:#991B1B;margin-bottom:18px;display:flex;align-items:center;gap:8px}
+.ale-ok{background:#F0FDF4;border:1px solid #BBF7D0;border-radius:var(--rs);padding:12px 15px;font-size:13px;color:#166534;margin-bottom:18px}
+
+/* ── TOPBAR ── */
+.topbar{position:fixed;top:0;left:0;right:0;height:64px;background:var(--white);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 28px;z-index:200;box-shadow:0 2px 12px rgba(0,0,0,.05)}
+.tlogo{display:flex;align-items:center;gap:10px;cursor:pointer}
+.tlogo-icon{width:36px;height:36px;background:linear-gradient(135deg,var(--gold),var(--gold-dim));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px}
+.tlogo-name{font-family:var(--df);font-weight:700;font-size:17px;color:var(--navy)}
+.tlogo-sub{font-size:10px;color:var(--light);letter-spacing:1px;text-transform:uppercase}
+.tnav{display:flex;gap:2px;margin-left:32px}
+.tnav-item{padding:8px 16px;border-radius:8px;font-size:14px;font-weight:500;color:var(--muted);cursor:pointer;transition:.2s}
+.tnav-item:hover{background:var(--cream-dark);color:var(--text)}
+.tnav-item.active{background:var(--navy);color:#fff}
+.tright{margin-left:auto;display:flex;align-items:center;gap:10px}
+.tbell{width:38px;height:38px;border-radius:10px;background:var(--cream);display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;transition:.2s;font-size:18px}
+.tbell:hover{background:var(--cream-dark)}
+.tbell .dot{position:absolute;top:7px;right:7px;width:8px;height:8px;background:var(--err);border-radius:50%;border:1.5px solid #fff}
+.tav{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold-dim));display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:14px;cursor:pointer;box-shadow:0 2px 8px rgba(201,168,76,.3);transition:.2s;position:relative}
+.tav:hover{transform:scale(1.05)}
+.av-menu{position:absolute;top:48px;right:0;background:#fff;border-radius:var(--r);box-shadow:var(--shl);border:1px solid var(--border);min-width:170px;overflow:hidden;display:none;z-index:300;animation:fi .2s ease}
+.av-menu.open{display:block}
+.av-item{padding:11px 16px;font-size:13px;cursor:pointer;transition:.15s;display:flex;align-items:center;gap:10px}
+.av-item:hover{background:var(--cream)}
+.av-item.red{color:var(--err)}
+.av-div{height:1px;background:var(--border)}
+
+/* ── MAIN ── */
+.main{margin-top:64px;padding:32px;max-width:1160px;margin-left:auto;margin-right:auto}
+
+/* ── DASHBOARD ── */
+.welcome{background:linear-gradient(135deg,var(--navy) 0%,var(--navy-light) 100%);border-radius:16px;padding:28px 32px;margin-bottom:24px;position:relative;overflow:hidden}
+.welcome::after{content:'🎓';position:absolute;right:28px;top:50%;transform:translateY(-50%);font-size:80px;opacity:.1}
+.welcome h2{font-family:var(--df);font-size:24px;color:#fff;margin-bottom:4px}
+.welcome h2 span{color:var(--gold-light)}
+.welcome p{color:rgba(255,255,255,.5);font-size:14px}
+.welcome-meta{display:flex;gap:16px;margin-top:16px}
+.wm{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:10px 18px;color:rgba(255,255,255,.8);font-size:13px;display:flex;align-items:center;gap:8px}
+
+.card{background:#fff;border-radius:var(--r);padding:24px;border:1px solid var(--border);box-shadow:var(--sh);margin-bottom:20px}
+.card-title{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:14px}
+
+.prog-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.prog-hd span{font-size:13px;color:var(--muted)}
+.prog-bar{height:10px;background:var(--cream-dark);border-radius:99px;overflow:hidden;margin-bottom:6px}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-light));border-radius:99px;transition:width 1s ease}
+.prog-foot{display:flex;justify-content:space-between;font-size:12px;color:var(--light)}
+
+.resume-inner{display:flex;align-items:center;gap:20px}
+.rthumb{width:128px;height:76px;background:linear-gradient(135deg,#1a1a3e,#2d4a7a);border-radius:var(--rs);display:flex;align-items:center;justify-content:center;flex-shrink:0;position:relative;cursor:pointer;overflow:hidden}
+.rthumb::after{content:'▶';position:absolute;color:rgba(255,255,255,.9);font-size:18px;background:rgba(0,0,0,.4);width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.rthumb-stars{position:absolute;inset:0;background:radial-gradient(ellipse at 30% 40%,rgba(255,200,100,.15) 0%,transparent 60%)}
+.rinfo h4{font-weight:600;font-size:15px;margin-bottom:3px}
+.rinfo p{font-size:13px;color:var(--muted);margin-bottom:14px}
+.sec-title{font-family:var(--df);font-size:20px;font-weight:700;margin-bottom:14px}
+
+/* MODULE LIST */
+.mod-list{display:flex;flex-direction:column;gap:8px}
+.mod-item{background:#fff;border:1px solid var(--border);border-radius:var(--r);overflow:hidden;transition:.2s}
+.mod-item:hover{border-color:var(--gold);box-shadow:0 2px 12px rgba(201,168,76,.12)}
+.mod-hd{padding:16px 20px;display:flex;align-items:center;gap:14px;cursor:pointer}
+.mod-num{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0}
+.mn-done{background:#DCFCE7;color:#16A34A}
+.mn-act{background:linear-gradient(135deg,var(--gold),var(--gold-dim));color:#fff}
+.mn-lock{background:var(--cream-dark);color:var(--light)}
+.mod-info{flex:1}
+.mod-info h4{font-weight:600;font-size:14px;margin-bottom:2px}
+.mod-info p{font-size:12px;color:var(--muted)}
+.mod-badge{padding:4px 10px;border-radius:99px;font-size:11px;font-weight:600;letter-spacing:.4px;text-transform:uppercase}
+.mb-done{background:#DCFCE7;color:#16A34A}
+.mb-act{background:var(--gold-bg);color:var(--gold-dim)}
+.mb-lock{background:var(--cream-dark);color:var(--light)}
+.mod-arrow{font-size:16px;color:var(--light);transition:.25s;margin-left:8px}
+.mod-item.open .mod-arrow{transform:rotate(90deg);color:var(--gold)}
+
+.vid-list{display:none;border-top:1px solid var(--cream-dark)}
+.mod-item.open .vid-list{display:block}
+.vid-item{padding:11px 20px 11px 70px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:.15s;border-bottom:1px solid var(--cream-dark);font-size:13px}
+.vid-item:last-child{border-bottom:none}
+.vid-item:hover{background:var(--cream)}
+.vid-item.cur{background:var(--gold-bg);border-left:3px solid var(--gold)}
+.vid-item.locked-v{opacity:.5;cursor:not-allowed}
+.vdot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.vd-done{background:var(--ok)}
+.vd-cur{background:var(--gold)}
+.vd-lock{background:var(--light)}
+.vid-name{flex:1;font-weight:500}
+.vid-dur{font-size:11px;color:var(--light)}
+.study-link{padding:10px 20px 10px 70px;font-size:13px;color:var(--gold);font-weight:600;cursor:pointer;display:block;border-top:1px dashed var(--border)}
+.study-link:hover{text-decoration:underline}
+
+/* ALERTS PANEL */
+.al-item{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid var(--cream-dark)}
+.al-item:last-child{border-bottom:none}
+.al-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:16px}
+.al-unlock{background:var(--gold-bg);color:var(--gold)}
+.al-done{background:#DCFCE7;color:var(--ok)}
+.al-content{flex:1}
+.al-content p{font-size:14px;font-weight:500;margin-bottom:1px}
+.al-content span{font-size:12px;color:var(--muted)}
+.al-btn{font-size:12px;font-weight:600;color:var(--gold);cursor:pointer;padding:6px 12px;border:1px solid var(--gold);border-radius:6px;white-space:nowrap;transition:.2s}
+.al-btn:hover{background:var(--gold);color:#fff}
+
+/* TABS */
+.tabs{display:flex;gap:4px;margin-bottom:20px;background:var(--cream-dark);border-radius:10px;padding:4px}
+.tab{padding:8px 20px;border-radius:8px;font-size:14px;font-weight:500;cursor:pointer;color:var(--muted);transition:.2s}
+.tab.active{background:#fff;color:var(--text);box-shadow:var(--sh)}
+
+/* ── MY COURSE ── */
+.course-layout{display:flex;gap:24px;align-items:flex-start}
+.course-sidebar{width:270px;flex-shrink:0;background:#fff;border-radius:var(--r);border:1px solid var(--border);box-shadow:var(--sh);overflow:hidden;position:sticky;top:88px;max-height:calc(100vh - 100px);overflow-y:auto}
+.cs-head{padding:18px 20px;background:var(--navy);border-bottom:1px solid rgba(255,255,255,.08)}
+.cs-head h4{color:#fff;font-family:var(--df);font-size:15px;margin-bottom:2px}
+.cs-head p{color:rgba(255,255,255,.45);font-size:11px;text-transform:uppercase;letter-spacing:1px}
+.cs-about{padding:12px 16px;border-bottom:1px solid var(--cream-dark);cursor:pointer;font-size:13px;font-weight:600;color:var(--gold);display:flex;align-items:center;gap:8px}
+.cs-about:hover{background:var(--cream)}
+.cs-mod{border-bottom:1px solid var(--cream-dark)}
+.cs-mod-hd{padding:11px 16px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:.15s}
+.cs-mod-hd:hover{background:var(--cream)}
+.cs-mod-hd.act-mod{background:var(--gold-bg)}
+.cs-mod-name{flex:1;font-size:13px;font-weight:600}
+.cs-mod-lock{font-size:13px}
+.cs-vids{display:none;background:var(--cream)}
+.cs-mod.open-mod .cs-vids{display:block}
+.cs-vid{padding:9px 16px 9px 36px;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:8px;transition:.15s;border-bottom:1px solid var(--border)}
+.cs-vid:hover{background:var(--cream-dark)}
+.cs-vid.active-v{background:var(--gold-bg);color:var(--gold-dim);font-weight:600}
+.cs-vid.locked-v{opacity:.45;cursor:not-allowed}
+.cs-study{padding:9px 16px 9px 36px;font-size:12px;color:var(--gold);cursor:pointer;font-weight:600;display:flex;align-items:center;gap:6px}
+.cs-study:hover{text-decoration:underline}
+.cs-final{padding:11px 16px;display:flex;align-items:center;gap:10px;cursor:pointer;font-size:13px;font-weight:600;transition:.15s}
+.cs-final:hover{background:var(--cream)}
+.cs-final.lock-final{opacity:.45;cursor:not-allowed}
+
+.course-main{flex:1;min-width:0}
+.vplayer{background:var(--navy);border-radius:var(--r);overflow:hidden;margin-bottom:18px;position:relative;aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;box-shadow:var(--shl)}
+.vp-bg{position:absolute;inset:0;background:linear-gradient(135deg,#0D1B2A 0%,#1B2838 50%,#0A1628 100%)}
+.vp-stars{position:absolute;inset:0;background:radial-gradient(ellipse at 20% 30%,rgba(201,168,76,.08) 0%,transparent 50%),radial-gradient(ellipse at 80% 70%,rgba(30,80,150,.15) 0%,transparent 50%)}
+.vp-center{position:relative;z-index:2;text-align:center}
+.play-ring{width:74px;height:74px;border-radius:50%;background:rgba(201,168,76,.9);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;transition:.2s;margin-bottom:14px;box-shadow:0 8px 32px rgba(201,168,76,.4)}
+.play-ring:hover{transform:scale(1.1);background:var(--gold)}
+.play-ring svg{margin-left:4px}
+.vp-title{color:#fff;font-family:var(--df);font-size:18px;font-weight:700}
+.vp-sub{color:rgba(255,255,255,.5);font-size:13px;margin-top:5px}
+.vp-controls{position:absolute;bottom:0;left:0;right:0;padding:14px 20px;background:linear-gradient(transparent,rgba(0,0,0,.75));display:flex;align-items:center;gap:12px;z-index:3}
+.vc-btn{background:none;border:none;color:#fff;cursor:pointer;font-size:18px;padding:4px;opacity:.8;transition:.15s}
+.vc-btn:hover{opacity:1}
+.vc-time{color:rgba(255,255,255,.65);font-size:12px;font-family:monospace}
+.seek{flex:1;height:4px;background:rgba(255,255,255,.2);border-radius:2px;cursor:not-allowed;position:relative}
+.seek-p{height:100%;width:12%;background:var(--gold);border-radius:2px}
+.no-seek{position:absolute;top:14px;right:14px;background:rgba(201,168,76,.9);color:var(--navy);font-size:10px;font-weight:700;padding:5px 10px;border-radius:6px;letter-spacing:.4px;z-index:4}
+
+.vinfo{background:#fff;border-radius:var(--r);padding:20px;border:1px solid var(--border);box-shadow:var(--sh);margin-bottom:18px}
+.vinfo h3{font-family:var(--df);font-size:20px;font-weight:700;margin-bottom:6px}
+.vinfo p{font-size:14px;color:var(--muted);line-height:1.75}
+
+.study-mat{background:#fff;border-radius:var(--r);padding:20px;border:1px solid var(--border);box-shadow:var(--sh)}
+.study-mat h4{font-weight:700;font-size:15px;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.mat-grid{display:flex;gap:12px;flex-wrap:wrap}
+.mat-file{display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:var(--rs);border:1.5px solid var(--border);cursor:pointer;transition:.2s;min-width:175px;background:var(--cream)}
+.mat-file:hover{border-color:var(--gold);background:#fff;box-shadow:0 2px 8px rgba(201,168,76,.15)}
+.ficon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.fi-pdf{background:#FEE2E2;color:#DC2626}
+.fi-doc{background:#DBEAFE;color:#2563EB}
+.fi-ppt{background:#FFEDD5;color:#EA580C}
+.fmeta .fn{font-size:13px;font-weight:600;display:block}
+.fmeta .ft{font-size:11px;color:var(--light);text-transform:uppercase}
+
+.about-card{background:#fff;border-radius:var(--r);padding:28px;border:1px solid var(--border);box-shadow:var(--sh)}
+.about-card h3{font-family:var(--df);font-size:22px;font-weight:700;margin-bottom:16px;color:var(--navy)}
+.about-rows{display:flex;flex-direction:column;gap:14px;margin-bottom:20px}
+.about-row{display:flex;align-items:flex-start;gap:12px;padding:14px;background:var(--cream);border-radius:var(--rs)}
+.about-row-icon{font-size:20px;flex-shrink:0}
+.about-row-info h5{font-weight:600;font-size:14px;margin-bottom:2px}
+.about-row-info p{font-size:13px;color:var(--muted)}
+
+/* ── FINAL TEST ── */
+.test-topbar{background:#fff;border-radius:var(--r);padding:20px 24px;border:1px solid var(--border);box-shadow:var(--sh);margin-bottom:22px;display:flex;align-items:center;justify-content:space-between}
+.test-topbar h2{font-family:var(--df);font-size:22px;font-weight:700}
+.test-topbar p{font-size:13px;color:var(--muted);margin-top:3px}
+.test-timer .t{font-size:28px;font-weight:700;color:var(--navy);font-family:monospace}
+.test-timer small{display:block;font-size:11px;color:var(--muted);text-align:right}
+
+.q-card{background:#fff;border-radius:var(--r);padding:22px;border:1px solid var(--border);box-shadow:var(--sh);margin-bottom:14px}
+.q-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.q-num{font-size:12px;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:.8px}
+.q-mark{background:var(--cream-dark);padding:3px 10px;border-radius:99px;font-size:11px;font-weight:600;color:var(--muted)}
+.q-text{font-size:15px;font-weight:500;line-height:1.7;margin-bottom:14px}
+.opts{display:flex;flex-direction:column;gap:9px}
+.opt{display:flex;align-items:center;gap:12px;padding:11px 15px;border-radius:var(--rs);border:1.5px solid var(--border);cursor:pointer;transition:.2s;font-size:14px}
+.opt:hover{border-color:var(--gold);background:var(--gold-bg)}
+.opt.sel{border-color:var(--gold);background:var(--gold-bg)}
+.opt.right{border-color:var(--ok);background:#F0FDF4;color:#16A34A}
+.opt.wrong{border-color:var(--err);background:#FEF2F2;color:#991B1B}
+.opt-l{width:28px;height:28px;border-radius:8px;background:var(--cream-dark);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex-shrink:0;transition:.2s}
+.opt.sel .opt-l{background:var(--gold);color:#fff}
+.opt.right .opt-l{background:var(--ok);color:#fff}
+.opt.wrong .opt-l{background:var(--err);color:#fff}
+
+.test-footer{background:#fff;border-radius:var(--r);padding:18px 24px;border:1px solid var(--border);box-shadow:var(--sh);display:flex;align-items:center;justify-content:space-between;position:sticky;bottom:20px}
+.test-prog{font-size:13px;color:var(--muted)}
+.test-dots{display:flex;gap:6px;margin-top:6px}
+.tdot{width:22px;height:22px;border-radius:6px;background:var(--cream-dark);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;cursor:pointer;transition:.2s;color:var(--muted)}
+.tdot.ans{background:var(--gold);color:#fff}
+.tdot.cur{background:var(--navy);color:#fff}
+
+/* ── SCORE ── */
+.score-top{background:linear-gradient(135deg,var(--navy),var(--navy-light));border-radius:var(--r);padding:40px;text-align:center;margin-bottom:24px;box-shadow:var(--shl)}
+.score-circle{width:120px;height:120px;border-radius:50%;margin:0 auto 18px;background:linear-gradient(135deg,var(--gold),var(--gold-dim));display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 8px 32px rgba(201,168,76,.4)}
+.score-n{font-size:30px;font-weight:700;color:#fff;line-height:1}
+.score-d{font-size:12px;color:rgba(255,255,255,.65)}
+.score-top h2{font-family:var(--df);font-size:24px;color:#fff;margin-bottom:6px}
+.score-top p{color:rgba(255,255,255,.5);font-size:14px}
+.score-stats{display:flex;gap:16px;justify-content:center;margin-top:18px;flex-wrap:wrap}
+.sstat{background:rgba(255,255,255,.08);border-radius:10px;padding:12px 20px;text-align:center}
+.sstat .sv{font-size:20px;font-weight:700;color:var(--gold-light)}
+.sstat .sl{font-size:10px;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:.6px;margin-top:2px}
+
+.score-qs{background:#fff;border-radius:var(--r);padding:22px;border:1px solid var(--border);box-shadow:var(--sh)}
+.sq-item{padding:14px 0;border-bottom:1px solid var(--cream-dark);display:flex;gap:14px}
+.sq-item:last-child{border-bottom:none}
+.sq-ind{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;margin-top:2px}
+.sq-ok{background:#DCFCE7;color:var(--ok)}
+.sq-fail{background:#FEE2E2;color:var(--err)}
+.sq-q{font-size:14px;font-weight:500;margin-bottom:4px}
+.sq-detail{font-size:12px;color:var(--muted)}
+
+/* ── PROFILE ── */
+.prof-card{background:#fff;border-radius:var(--r);padding:32px;border:1px solid var(--border);box-shadow:var(--sh);max-width:600px}
+.prof-top{display:flex;align-items:center;gap:22px;margin-bottom:28px;padding-bottom:22px;border-bottom:1px solid var(--cream-dark)}
+.prof-av{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold-dim));display:flex;align-items:center;justify-content:center;color:#fff;font-size:28px;font-weight:700;box-shadow:0 6px 20px rgba(201,168,76,.3);flex-shrink:0}
+.prof-info h3{font-family:var(--df);font-size:22px;font-weight:700;margin-bottom:3px}
+.prof-info p{color:var(--muted);font-size:14px}
+.prof-badge{margin-top:8px;display:inline-flex;align-items:center;gap:6px;background:var(--gold-bg);color:var(--gold-dim);font-size:12px;font-weight:600;padding:4px 10px;border-radius:99px;border:1px solid rgba(201,168,76,.3)}
+
+.prof-rows{display:flex;flex-direction:column;gap:1px;border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+.prof-row{padding:16px 20px;background:#fff;display:flex;align-items:center;border-bottom:1px solid var(--cream-dark)}
+.prof-row:last-child{border-bottom:none}
+.prof-label{width:140px;font-size:13px;font-weight:600;color:var(--muted);flex-shrink:0}
+.prof-val{flex:1;font-size:14px;font-weight:500}
+.prof-edit{font-size:13px;font-weight:600;color:var(--gold);cursor:pointer;transition:.15s}
+.prof-edit:hover{color:var(--gold-dim);text-decoration:underline}
+.prof-edit-input{flex:1;padding:8px 12px;border:1.5px solid var(--gold);border-radius:var(--rs);font-size:14px;background:#fff}
+
+.upd-btn{background:linear-gradient(135deg,var(--gold),var(--gold-dim));color:#fff;padding:9px 20px;border-radius:var(--rs);font-size:13px;font-weight:600;cursor:pointer;border:none;transition:.2s}
+.upd-btn:hover{transform:translateY(-1px)}
+
+.upload-area{border:2px dashed var(--border);border-radius:var(--r);padding:24px;text-align:center;cursor:pointer;transition:.2s;margin-bottom:20px}
+.upload-area:hover{border-color:var(--gold);background:var(--gold-bg)}
+.upload-area span{font-size:24px;display:block;margin-bottom:8px}
+.upload-area p{font-size:13px;color:var(--muted)}
+
+/* ── LOCKED OVERLAY ── */
+.locked-overlay{position:absolute;inset:0;background:rgba(15,25,35,.85);display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:var(--r);z-index:10;text-align:center;padding:20px}
+.locked-overlay .lo-icon{font-size:42px;margin-bottom:12px}
+.locked-overlay h4{color:#fff;font-family:var(--df);font-size:18px;margin-bottom:6px}
+.locked-overlay p{color:rgba(255,255,255,.6);font-size:13px}
+
+/* ── MISC ── */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px}
+@media(max-width:900px){.grid-2,.grid-3{grid-template-columns:1fr}.course-layout{flex-direction:column}.course-sidebar{width:100%;position:static;max-height:none}.auth-left{display:none}.auth-right{width:100%}}
+.toast{position:fixed;bottom:28px;right:28px;background:var(--navy);color:#fff;padding:14px 20px;border-radius:var(--r);font-size:14px;font-weight:500;box-shadow:var(--shl);display:none;z-index:999;animation:fi .3s ease;display:flex;align-items:center;gap:10px;opacity:0;transition:opacity .3s}
+.toast.show{opacity:1}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════
+     PAGE: LOGIN
+═══════════════════════════════════════ -->
+<div id="pg-login" class="page active">
+<div class="auth-wrap">
+  <div class="auth-left">
+    <div class="auth-left-inner">
+      <div class="alogo">
+        <div class="alogo-icon">🏛️</div>
+        <div>
+          <h1>Slovacademy</h1>
+          <p>Akadémia vzdelávania</p>
+        </div>
+      </div>
+      <div class="auth-tag">
+        <h2>Learn at your<br/><span>own pace.</span></h2>
+        <p>Access world-class MBA and LLM programs through our flexible self-paced learning platform.</p>
+      </div>
+      <div class="auth-badges">
+        <div class="abadge"><span>📚</span> 2 Programs</div>
+        <div class="abadge"><span>🎯</span> Self-Paced</div>
+        <div class="abadge"><span>🏆</span> Certified</div>
+      </div>
+    </div>
+  </div>
+  <div class="auth-right">
+    <div class="auth-card">
+      <h3>Account Login</h3>
+      <p class="sub">Welcome back! Sign in to continue your learning.</p>
+      <div id="login-err" class="ale-err" style="display:none">⚠️ Email ID or password is not correct.</div>
+      <div class="fg">
+        <label>Email address</label>
+        <input id="login-email" type="email" class="fc" placeholder="xyz@email.com" value="john.doe@mba.com"/>
+      </div>
+      <div class="fg">
+        <label>Password</label>
+        <input id="login-pw" type="password" class="fc" placeholder="••••••••" value="Pass@temp"/>
+      </div>
+      <div class="frow">
+        <label class="cb"><input type="checkbox" checked/> Remember me</label>
+        <span class="gl" onclick="go('pg-forgot')">Forgot password?</span>
+      </div>
+      <button class="btn btn-p" onclick="doLogin()">Login</button>
+      <div style="margin-top:20px;text-align:center;font-size:13px;color:var(--muted)">Demo: use any email &amp; password to login</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     PAGE: FORGOT PASSWORD (step 1)
+═══════════════════════════════════════ -->
+<div id="pg-forgot" class="page">
+<div class="auth-wrap">
+  <div class="auth-left">
+    <div class="auth-left-inner">
+      <div class="alogo"><div class="alogo-icon">🏛️</div><div><h1>Slovacademy</h1><p>Akadémia vzdelávania</p></div></div>
+      <div class="auth-tag"><h2>Reset your<br/><span>password.</span></h2><p>We'll send a reset link to your registered email address.</p></div>
+    </div>
+  </div>
+  <div class="auth-right">
+    <div class="auth-card">
+      <h3>Forgot Password</h3>
+      <p class="sub">Enter your registered email to receive a reset link.</p>
+      <div id="forgot-ok" class="ale-ok" style="display:none">✅ We sent a reset password link to your registered Email Id.</div>
+      <div class="fg">
+        <label>Email address</label>
+        <input id="forgot-email" type="email" class="fc" placeholder="xyz@email.com"/>
+      </div>
+      <button class="btn btn-p" onclick="doForgot()">Send link</button>
+      <button class="btn btn-g" onclick="go('pg-login')">← Go Back</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     PAGE: RESET PASSWORD
+═══════════════════════════════════════ -->
+<div id="pg-reset" class="page">
+<div class="auth-wrap">
+  <div class="auth-left">
+    <div class="auth-left-inner">
+      <div class="alogo"><div class="alogo-icon">🏛️</div><div><h1>Slovacademy</h1><p>Akadémia vzdelávania</p></div></div>
+      <div class="auth-tag"><h2>Create new<br/><span>password.</span></h2><p>Choose a strong password to secure your account.</p></div>
+    </div>
+  </div>
+  <div class="auth-right">
+    <div class="auth-card">
+      <h3>Forgot Password</h3>
+      <p class="sub">Enter and confirm your new password.</p>
+      <div class="fg"><label>New password</label><input type="password" class="fc" placeholder="••••••••"/></div>
+      <div class="fg"><label>Confirm password</label><input type="password" class="fc" placeholder="••••••••"/></div>
+      <button class="btn btn-p" onclick="go('pg-login')">Update password</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     TOPBAR (shared for inner pages)
+═══════════════════════════════════════ -->
+<div id="topbar" style="display:none">
+<div class="topbar">
+  <div class="tlogo" onclick="go('pg-dashboard')">
+    <div class="tlogo-icon">🏛️</div>
+    <div><div class="tlogo-name">Slovacademy</div><div class="tlogo-sub">Student Portal</div></div>
+  </div>
+  <nav class="tnav">
+    <div class="tnav-item" id="nav-dash" onclick="go('pg-dashboard')">Dashboard</div>
+    <div class="tnav-item" id="nav-course" onclick="go('pg-course')">My Course</div>
+  </nav>
+  <div class="tright">
+    <div class="tbell" onclick="go('pg-dashboard');switchTab('alerts')">🔔<div class="dot"></div></div>
+    <div class="tav" onclick="toggleMenu()">JD
+      <div class="av-menu" id="av-menu">
+        <div class="av-item" onclick="go('pg-profile')">👤 My Profile</div>
+        <div class="av-div"></div>
+        <div class="av-item red" onclick="go('pg-login')">🚪 Logout</div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     PAGE: DASHBOARD
+═══════════════════════════════════════ -->
+<div id="pg-dashboard" class="page">
+<div class="main">
+  <!-- Welcome -->
+  <div class="welcome">
+    <h2>Welcome back, <span>John Doe</span> 👋</h2>
+    <p>You're making great progress on your MBA Program. Keep it up!</p>
+    <div class="welcome-meta">
+      <div class="wm">📖 MBA Program</div>
+      <div class="wm">🔌 Offline Student</div>
+      <div class="wm">📅 Enrolled: Sep 2024</div>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <div class="tab active" id="tab-overview" onclick="switchTab('overview')">Overview</div>
+    <div class="tab" id="tab-alerts" onclick="switchTab('alerts')">Alerts <span style="background:var(--err);color:#fff;font-size:10px;padding:1px 6px;border-radius:99px;margin-left:4px">3</span></div>
+  </div>
+
+  <!-- OVERVIEW TAB -->
+  <div id="tab-overview-content">
+    <div class="grid-2">
+      <!-- Progress Card -->
+      <div class="card">
+        <div class="card-title">MBA Program Progress</div>
+        <div class="prog-hd"><span>Module 2 of 8 in progress</span><span style="font-weight:700;color:var(--text)">20%</span></div>
+        <div class="prog-bar"><div class="prog-fill" style="width:20%"></div></div>
+        <div class="prog-foot"><span>20h completed</span><span>100h total</span></div>
+        <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--cream-dark);display:flex;gap:20px">
+          <div style="text-align:center"><div style="font-size:20px;font-weight:700;color:var(--navy)">2</div><div style="font-size:11px;color:var(--muted)">Modules Done</div></div>
+          <div style="text-align:center"><div style="font-size:20px;font-weight:700;color:var(--gold)">1</div><div style="font-size:11px;color:var(--muted)">In Progress</div></div>
+          <div style="text-align:center"><div style="font-size:20px;font-weight:700;color:var(--light)">5</div><div style="font-size:11px;color:var(--muted)">Locked</div></div>
+          <div style="text-align:center"><div style="font-size:20px;font-weight:700;color:var(--muted)">1</div><div style="font-size:11px;color:var(--muted)">Final Test</div></div>
+        </div>
+      </div>
+      <!-- Time Spent -->
+      <div class="card">
+        <div class="card-title">Time Spent</div>
+        <div style="font-size:36px;font-weight:700;color:var(--navy);font-family:var(--df);margin-bottom:4px">20h <span style="font-size:18px;color:var(--muted)">/ 100h</span></div>
+        <div style="font-size:13px;color:var(--muted);margin-bottom:14px">Total learning time</div>
+        <div class="prog-bar"><div class="prog-fill" style="width:20%"></div></div>
+        <div style="margin-top:12px;font-size:13px;color:var(--muted)">⏱️ Avg session: <strong>2.5h</strong> &nbsp;|&nbsp; 📆 Last active: <strong>Today</strong></div>
+      </div>
+    </div>
+
+    <!-- Resume Card -->
+    <div class="card">
+      <div class="card-title">Resume Where You Left Off</div>
+      <div class="resume-inner">
+        <div class="rthumb" onclick="go('pg-course')"><div class="rthumb-stars"></div></div>
+        <div class="rinfo">
+          <h4>MBA Program – Module 2: Marketing</h4>
+          <p>Video 1 · 0:11 / 2:05 · Forward seeking disabled</p>
+          <button class="btn btn-p btn-sm" onclick="go('pg-course')" style="width:auto">▶ Resume Module</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Module List -->
+    <div class="sec-title">MBA Program Modules</div>
+    <div class="mod-list">
+      <!-- Module 1 -->
+      <div class="mod-item" onclick="toggleMod(this)">
+        <div class="mod-hd">
+          <div class="mod-num mn-done">✓</div>
+          <div class="mod-info"><h4>Module 1: Basics of MBA</h4><p>5 Videos · 10h · Completed</p></div>
+          <span class="mod-badge mb-done">Done</span>
+          <span class="mod-arrow">▶</span>
+        </div>
+        <div class="vid-list">
+          <div class="vid-item"><div class="vdot vd-done"></div><span class="vid-name">Video 1 – Introduction to MBA</span><span class="vid-dur">45 min</span></div>
+          <div class="vid-item"><div class="vdot vd-done"></div><span class="vid-name">Video 2 – Business Fundamentals</span><span class="vid-dur">52 min</span></div>
+          <div class="vid-item"><div class="vdot vd-done"></div><span class="vid-name">Video 3 – Strategy Overview</span><span class="vid-dur">48 min</span></div>
+          <div class="vid-item"><div class="vdot vd-done"></div><span class="vid-name">Video 4 – Leadership Basics</span><span class="vid-dur">55 min</span></div>
+          <div class="vid-item"><div class="vdot vd-done"></div><span class="vid-name">Video 5 – Module Summary</span><span class="vid-dur">40 min</span></div>
+          <a class="study-link">📄 Study Material (3 files)</a>
+        </div>
+      </div>
+      <!-- Module 2 -->
+      <div class="mod-item open" onclick="toggleMod(this)">
+        <div class="mod-hd">
+          <div class="mod-num mn-act">2</div>
+          <div class="mod-info"><h4>Module 2: Marketing</h4><p>5 Videos · 12h · 1 video completed</p></div>
+          <span class="mod-badge mb-act">In Progress</span>
+          <span class="mod-arrow">▶</span>
+        </div>
+        <div class="vid-list">
+          <div class="vid-item cur" onclick="event.stopPropagation();go('pg-course')"><div class="vdot vd-cur"></div><span class="vid-name">Video 1 – Introduction to Marketing</span><span class="vid-dur">▶ Current</span></div>
+          <div class="vid-item locked-v" onclick="event.stopPropagation()"><div class="vdot vd-lock"></div><span class="vid-name">Video 2 – Market Research</span><span class="vid-dur">🔒</span></div>
+          <div class="vid-item locked-v" onclick="event.stopPropagation()"><div class="vdot vd-lock"></div><span class="vid-name">Video 3 – Consumer Behaviour</span><span class="vid-dur">🔒</span></div>
+          <div class="vid-item locked-v" onclick="event.stopPropagation()"><div class="vdot vd-lock"></div><span class="vid-name">Video 4 – Digital Marketing</span><span class="vid-dur">🔒</span></div>
+          <div class="vid-item locked-v" onclick="event.stopPropagation()"><div class="vdot vd-lock"></div><span class="vid-name">Video 5 – Marketing Analytics</span><span class="vid-dur">🔒</span></div>
+          <a class="study-link">📄 Study Material (3 files)</a>
+        </div>
+      </div>
+      <!-- Modules 3-8 locked -->
+      <div class="mod-item" style="opacity:.6;cursor:not-allowed">
+        <div class="mod-hd"><div class="mod-num mn-lock">🔒</div><div class="mod-info"><h4>Module 3: Finance</h4><p>5 Videos · 12h · Locked</p></div><span class="mod-badge mb-lock">Locked</span></div>
+      </div>
+      <div class="mod-item" style="opacity:.6;cursor:not-allowed">
+        <div class="mod-hd"><div class="mod-num mn-lock">🔒</div><div class="mod-info"><h4>Module 4: Business Strategy</h4><p>5 Videos · 10h · Locked</p></div><span class="mod-badge mb-lock">Locked</span></div>
+      </div>
+      <div class="mod-item" style="opacity:.6;cursor:not-allowed">
+        <div class="mod-hd"><div class="mod-num mn-lock">🔒</div><div class="mod-info"><h4>Module 5: Operations Management</h4><p>5 Videos · 11h · Locked</p></div><span class="mod-badge mb-lock">Locked</span></div>
+      </div>
+      <div class="mod-item" style="opacity:.6;cursor:not-allowed">
+        <div class="mod-hd"><div class="mod-num mn-lock">🔒</div><div class="mod-info"><h4>Module 6: Human Resources</h4><p>5 Videos · 10h · Locked</p></div><span class="mod-badge mb-lock">Locked</span></div>
+      </div>
+      <div class="mod-item" style="opacity:.6;cursor:not-allowed">
+        <div class="mod-hd"><div class="mod-num mn-lock">🔒</div><div class="mod-info"><h4>Module 7: Economics</h4><p>5 Videos · 11h · Locked</p></div><span class="mod-badge mb-lock">Locked</span></div>
+      </div>
+      <div class="mod-item" style="opacity:.6;cursor:not-allowed">
+        <div class="mod-hd"><div class="mod-num mn-lock">🔒</div><div class="mod-info"><h4>Module 8: Entrepreneurship</h4><p>5 Videos · 12h · Locked</p></div><span class="mod-badge mb-lock">Locked</span></div>
+      </div>
+      <!-- Final Test -->
+      <div class="mod-item" style="opacity:.6;cursor:not-allowed">
+        <div class="mod-hd"><div class="mod-num mn-lock">🔒</div><div class="mod-info"><h4>Final Test – MBA Program</h4><p>10 Questions · Unlock after all modules</p></div><span class="mod-badge mb-lock">Locked</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ALERTS TAB -->
+  <div id="tab-alerts-content" style="display:none">
+    <div class="card">
+      <div class="card-title">Notifications & Alerts</div>
+      <div class="al-item">
+        <div class="al-icon al-unlock">🔓</div>
+        <div class="al-content"><p>Module 2 Unlocked</p><span>Today, 9:00 AM – Complete Module 1 to unlock Module 2</span></div>
+        <span class="al-btn" onclick="go('pg-course')">View</span>
+      </div>
+      <div class="al-item">
+        <div class="al-icon al-done">✓</div>
+        <div class="al-content"><p>Module 1 Completed</p><span>Yesterday, 6:30 PM – Great job finishing Module 1!</span></div>
+      </div>
+      <div class="al-item">
+        <div class="al-icon al-unlock">🔓</div>
+        <div class="al-content"><p>Module 1 Unlocked</p><span>2 days ago – You started your MBA journey</span></div>
+        <span class="al-btn" onclick="go('pg-course')">View</span>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     PAGE: MY COURSE
+═══════════════════════════════════════ -->
+<div id="pg-course" class="page">
+<div class="main" style="max-width:1280px">
+  <div class="course-layout">
+    <!-- Sidebar -->
+    <div class="course-sidebar">
+      <div class="cs-head"><h4>MBA Program</h4><p>Course Outline</p></div>
+      <div class="cs-about" onclick="showView('about')">ℹ️ About Course</div>
+
+      <!-- Module 1 - Done -->
+      <div class="cs-mod open-mod">
+        <div class="cs-mod-hd" onclick="toggleCsMod(this)">
+          <span style="font-size:13px">✅</span>
+          <span class="cs-mod-name">Module 1: Basics of MBA</span>
+          <span class="cs-mod-lock">▾</span>
+        </div>
+        <div class="cs-vids">
+          <div class="cs-vid" onclick="showView('done-v')"><div class="vdot vd-done" style="margin-right:4px"></div>Video 1</div>
+          <div class="cs-vid" onclick="showView('done-v')"><div class="vdot vd-done" style="margin-right:4px"></div>Video 2</div>
+          <div class="cs-vid" onclick="showView('done-v')"><div class="vdot vd-done" style="margin-right:4px"></div>Video 3</div>
+          <div class="cs-vid" onclick="showView('done-v')"><div class="vdot vd-done" style="margin-right:4px"></div>Video 4</div>
+          <div class="cs-vid" onclick="showView('done-v')"><div class="vdot vd-done" style="margin-right:4px"></div>Video 5</div>
+          <div class="cs-study" onclick="showView('study')">📄 Study material</div>
+        </div>
+      </div>
+
+      <!-- Module 2 - Active -->
+      <div class="cs-mod open-mod">
+        <div class="cs-mod-hd act-mod" onclick="toggleCsMod(this)">
+          <span style="font-size:13px">▶️</span>
+          <span class="cs-mod-name">Module 2: Marketing</span>
+          <span class="cs-mod-lock">▾</span>
+        </div>
+        <div class="cs-vids">
+          <div class="cs-vid active-v" onclick="showView('video')"><div class="vdot vd-cur" style="margin-right:4px"></div>Video 1</div>
+          <div class="cs-vid locked-v" onclick="lockedClick()"><div class="vdot vd-lock" style="margin-right:4px"></div>Video 2 🔒</div>
+          <div class="cs-vid locked-v" onclick="lockedClick()"><div class="vdot vd-lock" style="margin-right:4px"></div>Video 3 🔒</div>
+          <div class="cs-vid locked-v" onclick="lockedClick()"><div class="vdot vd-lock" style="margin-right:4px"></div>Video 4 🔒</div>
+          <div class="cs-vid locked-v" onclick="lockedClick()"><div class="vdot vd-lock" style="margin-right:4px"></div>Video 5 🔒</div>
+          <div class="cs-study" onclick="showView('study')">📄 Study material</div>
+        </div>
+      </div>
+
+      <!-- Modules 3-8 locked -->
+      <div class="cs-mod"><div class="cs-mod-hd" style="opacity:.5;cursor:not-allowed"><span>🔒</span><span class="cs-mod-name">Module 3: Finance</span></div></div>
+      <div class="cs-mod"><div class="cs-mod-hd" style="opacity:.5;cursor:not-allowed"><span>🔒</span><span class="cs-mod-name">Module 4: Business Strategy</span></div></div>
+      <div class="cs-mod"><div class="cs-mod-hd" style="opacity:.5;cursor:not-allowed"><span>🔒</span><span class="cs-mod-name">Module 5: Operations</span></div></div>
+      <div class="cs-mod"><div class="cs-mod-hd" style="opacity:.5;cursor:not-allowed"><span>🔒</span><span class="cs-mod-name">Module 6: Human Resources</span></div></div>
+      <div class="cs-mod"><div class="cs-mod-hd" style="opacity:.5;cursor:not-allowed"><span>🔒</span><span class="cs-mod-name">Module 7: Economics</span></div></div>
+      <div class="cs-mod"><div class="cs-mod-hd" style="opacity:.5;cursor:not-allowed"><span>🔒</span><span class="cs-mod-name">Module 8: Entrepreneurship</span></div></div>
+      <div class="cs-final lock-final" onclick="lockedClick()">🔒 Final Test</div>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="course-main">
+
+      <!-- VIEW: VIDEO PLAYER -->
+      <div id="view-video">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+          <div><div style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;font-weight:600">MBA – Module 2: Marketing</div><div style="font-size:20px;font-weight:700;font-family:var(--df)">Video 1 – Introduction to Marketing</div></div>
+          <span class="mod-badge mb-act">In Progress</span>
+        </div>
+        <div class="vplayer">
+          <div class="vp-bg"></div>
+          <div class="vp-stars"></div>
+          <div class="no-seek">⛔ Forward seeking disabled</div>
+          <div class="vp-center" id="vp-center">
+            <div class="play-ring" onclick="togglePlay()" id="play-btn">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg>
+            </div>
+            <div class="vp-title">MBA – Module 2: Marketing</div>
+            <div class="vp-sub">Video 1 · 2:05 duration</div>
+          </div>
+          <div class="vp-controls">
+            <button class="vc-btn" onclick="rewind()">↩</button>
+            <button class="vc-btn" onclick="togglePlay()" id="play-ctrl">▶</button>
+            <span class="vc-time" id="vc-time">0:11 / 2:05</span>
+            <div class="seek"><div class="seek-p" id="seek-p"></div></div>
+            <button class="vc-btn">🔊</button>
+            <button class="vc-btn">⛶</button>
+          </div>
+        </div>
+        <div class="vinfo">
+          <h3>Introduction to Marketing</h3>
+          <p>This video covers the foundational concepts of marketing in an MBA context. You'll explore the 4Ps of marketing (Product, Price, Place, Promotion), understand consumer behaviour, and learn how businesses develop effective marketing strategies to reach their target audiences. This module sets the stage for advanced marketing topics covered in subsequent videos.</p>
+        </div>
+        <div style="background:#FEF9EC;border:1px solid rgba(201,168,76,.3);border-radius:var(--r);padding:16px 20px;margin-bottom:16px;display:flex;align-items:center;gap:12px">
+          <span style="font-size:20px">⚠️</span>
+          <div><strong>Sequential Learning:</strong> Complete this video fully before the next video unlocks. Forward-seeking is disabled to ensure thorough learning.</div>
+        </div>
+        <div style="display:flex;gap:12px;justify-content:flex-end">
+          <button class="btn btn-g btn-sm" onclick="showView('study')">📄 View Study Material</button>
+          <button class="btn btn-p btn-sm" onclick="markComplete()">✓ Mark Complete &amp; Unlock Next</button>
+        </div>
+      </div>
+
+      <!-- VIEW: COMPLETED VIDEO -->
+      <div id="view-done-v" style="display:none">
+        <div style="margin-bottom:16px"><div style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;font-weight:600">MBA – Module 1: Basics of MBA</div><div style="font-size:20px;font-weight:700;font-family:var(--df)">Completed Video</div></div>
+        <div class="vplayer">
+          <div class="vp-bg"></div>
+          <div class="vp-stars"></div>
+          <div class="vp-center">
+            <div class="play-ring"><svg width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg></div>
+            <div class="vp-title">Module 1 – Completed Video</div>
+            <div class="vp-sub">You can rewatch this video anytime</div>
+          </div>
+          <div class="vp-controls">
+            <button class="vc-btn">↩</button>
+            <button class="vc-btn">▶</button>
+            <span class="vc-time">2:05 / 2:05</span>
+            <div class="seek"><div class="seek-p" style="width:100%;background:var(--ok)"></div></div>
+            <button class="vc-btn">🔊</button>
+          </div>
+        </div>
+        <div class="vinfo" style="border-left:4px solid var(--ok)">
+          <h3 style="color:#16A34A">✓ Video Completed</h3>
+          <p>You have successfully completed this video. Feel free to rewatch it anytime. The next video in the sequence has been unlocked for you.</p>
+        </div>
+      </div>
+
+      <!-- VIEW: STUDY MATERIAL -->
+      <div id="view-study" style="display:none">
+        <div style="margin-bottom:16px"><div style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;font-weight:600">MBA – Module 2: Marketing</div><div style="font-size:20px;font-weight:700;font-family:var(--df)">Study Material</div></div>
+        <div class="study-mat">
+          <h4>📄 Downloadable Resources</h4>
+          <div class="mat-grid">
+            <div class="mat-file" onclick="showToast('📥 Downloading PDF...')"><div class="ficon fi-pdf">📕</div><div class="fmeta"><span class="fn">Marketing Study material</span><span class="ft">PDF · 2.4 MB</span></div></div>
+            <div class="mat-file" onclick="showToast('📥 Downloading DOC...')"><div class="ficon fi-doc">📘</div><div class="fmeta"><span class="fn">Marketing Study material</span><span class="ft">DOC · 1.1 MB</span></div></div>
+            <div class="mat-file" onclick="showToast('📥 Downloading PPT...')"><div class="ficon fi-ppt">📙</div><div class="fmeta"><span class="fn">Marketing Study material</span><span class="ft">PPT · 5.7 MB</span></div></div>
+          </div>
+        </div>
+        <div class="card" style="margin-top:16px">
+          <div class="card-title">Module 1 Study Materials (Completed)</div>
+          <div class="mat-grid">
+            <div class="mat-file" onclick="showToast('📥 Downloading...')"><div class="ficon fi-pdf">📕</div><div class="fmeta"><span class="fn">MBA Basics notes</span><span class="ft">PDF · 1.8 MB</span></div></div>
+            <div class="mat-file" onclick="showToast('📥 Downloading...')"><div class="ficon fi-doc">📘</div><div class="fmeta"><span class="fn">Business Fundamentals</span><span class="ft">DOC · 900 KB</span></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- VIEW: ABOUT COURSE -->
+      <div id="view-about" style="display:none">
+        <div class="about-card">
+          <h3>About the MBA Program</h3>
+          <div class="about-rows">
+            <div class="about-row"><div class="about-row-icon">🎯</div><div class="about-row-info"><h5>Program Objective</h5><p>This MBA program is designed to develop business leaders with a comprehensive understanding of key management disciplines.</p></div></div>
+            <div class="about-row"><div class="about-row-icon">📚</div><div class="about-row-info"><h5>Structure</h5><p>8 core modules covering Marketing, Finance, Strategy, Operations, HR, Economics, and Entrepreneurship. Each module contains 5 videos and study materials.</p></div></div>
+            <div class="about-row"><div class="about-row-icon">⏱️</div><div class="about-row-info"><h5>Duration</h5><p>100 hours of content (approximately 3–6 months at a self-paced schedule of 1–2 hours per day).</p></div></div>
+            <div class="about-row"><div class="about-row-icon">🔒</div><div class="about-row-info"><h5>Sequential Learning</h5><p>Videos unlock progressively. Each video must be watched in full before the next one becomes available. Forward seeking is disabled.</p></div></div>
+            <div class="about-row"><div class="about-row-icon">🏆</div><div class="about-row-info"><h5>Final Assessment</h5><p>Complete all 8 modules to unlock the Final Test. A passing score earns your MBA Program certificate.</p></div></div>
+          </div>
+          <button class="btn btn-p btn-sm" style="width:auto" onclick="showView('video')">▶ Continue Learning</button>
+        </div>
+      </div>
+
+    </div><!-- /course-main -->
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     PAGE: FINAL TEST
+═══════════════════════════════════════ -->
+<div id="pg-test" class="page">
+<div class="main">
+  <div class="test-topbar">
+    <div>
+      <h2>MBA – Final Test</h2>
+      <p>Answer all 5 questions. Each question has one correct answer.</p>
+    </div>
+    <div class="test-timer">
+      <div class="t" id="timer">28:45</div>
+      <small>Time remaining</small>
+    </div>
+  </div>
+
+  <!-- Q1 -->
+  <div class="q-card">
+    <div class="q-meta"><span class="q-num">Question 1</span><span class="q-mark">1 Mark</span></div>
+    <div class="q-text">What does MBA stand for in the context of higher business education?</div>
+    <div class="opts" data-q="1" data-ans="A">
+      <div class="opt" onclick="selectOpt(this,'1','A')"><span class="opt-l">A</span>Master of Business Administration</div>
+      <div class="opt" onclick="selectOpt(this,'1','B')"><span class="opt-l">B</span>Master of Basic Accounting</div>
+      <div class="opt" onclick="selectOpt(this,'1','C')"><span class="opt-l">C</span>Management by Administration</div>
+      <div class="opt" onclick="selectOpt(this,'1','D')"><span class="opt-l">D</span>Masters in Budget Analysis</div>
+    </div>
+  </div>
+  <!-- Q2 -->
+  <div class="q-card">
+    <div class="q-meta"><span class="q-num">Question 2</span><span class="q-mark">1 Mark</span></div>
+    <div class="q-text">Which of the following is part of the 4Ps of Marketing introduced in Module 2?</div>
+    <div class="opts" data-q="2" data-ans="C">
+      <div class="opt" onclick="selectOpt(this,'2','A')"><span class="opt-l">A</span>People</div>
+      <div class="opt" onclick="selectOpt(this,'2','B')"><span class="opt-l">B</span>Profit</div>
+      <div class="opt" onclick="selectOpt(this,'2','C')"><span class="opt-l">C</span>Promotion</div>
+      <div class="opt" onclick="selectOpt(this,'2','D')"><span class="opt-l">D</span>Productivity</div>
+    </div>
+  </div>
+  <!-- Q3 -->
+  <div class="q-card">
+    <div class="q-meta"><span class="q-num">Question 3</span><span class="q-mark">1 Mark</span></div>
+    <div class="q-text">In the context of business strategy, what does SWOT analysis stand for?</div>
+    <div class="opts" data-q="3" data-ans="B">
+      <div class="opt" onclick="selectOpt(this,'3','A')"><span class="opt-l">A</span>Sales, Workforce, Operations, Trends</div>
+      <div class="opt" onclick="selectOpt(this,'3','B')"><span class="opt-l">B</span>Strengths, Weaknesses, Opportunities, Threats</div>
+      <div class="opt" onclick="selectOpt(this,'3','C')"><span class="opt-l">C</span>Strategy, Workforce, Objectives, Technology</div>
+      <div class="opt" onclick="selectOpt(this,'3','D')"><span class="opt-l">D</span>Sales, Weaknesses, Opportunities, Timing</div>
+    </div>
+  </div>
+  <!-- Q4 -->
+  <div class="q-card">
+    <div class="q-meta"><span class="q-num">Question 4</span><span class="q-mark">1 Mark</span></div>
+    <div class="q-text">Which financial statement shows a company's revenues and expenses over a specific period?</div>
+    <div class="opts" data-q="4" data-ans="A">
+      <div class="opt" onclick="selectOpt(this,'4','A')"><span class="opt-l">A</span>Income Statement</div>
+      <div class="opt" onclick="selectOpt(this,'4','B')"><span class="opt-l">B</span>Balance Sheet</div>
+      <div class="opt" onclick="selectOpt(this,'4','C')"><span class="opt-l">C</span>Cash Flow Statement</div>
+      <div class="opt" onclick="selectOpt(this,'4','D')"><span class="opt-l">D</span>Equity Statement</div>
+    </div>
+  </div>
+  <!-- Q5 -->
+  <div class="q-card">
+    <div class="q-meta"><span class="q-num">Question 5</span><span class="q-mark">3 Marks</span></div>
+    <div class="q-text">Which of the following best describes the concept of "Economies of Scale" as covered in the Operations Management module?</div>
+    <div class="opts" data-q="5" data-ans="B">
+      <div class="opt" onclick="selectOpt(this,'5','A')"><span class="opt-l">A</span>The cost per unit increases as production volume rises</div>
+      <div class="opt" onclick="selectOpt(this,'5','B')"><span class="opt-l">B</span>The cost per unit decreases as production volume increases</div>
+      <div class="opt" onclick="selectOpt(this,'5','C')"><span class="opt-l">C</span>Revenue grows proportionally with advertising spend</div>
+      <div class="opt" onclick="selectOpt(this,'5','D')"><span class="opt-l">D</span>Market share increases as competition decreases</div>
+    </div>
+  </div>
+
+  <div class="test-footer">
+    <div>
+      <div class="test-prog">Progress: <strong id="ans-count">0</strong> / 5 answered</div>
+      <div class="test-dots" id="test-dots">
+        <div class="tdot cur">1</div><div class="tdot">2</div><div class="tdot">3</div><div class="tdot">4</div><div class="tdot">5</div>
+      </div>
+    </div>
+    <button class="btn btn-p" onclick="submitTest()">Submit Test →</button>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     PAGE: SCORE
+═══════════════════════════════════════ -->
+<div id="pg-score" class="page">
+<div class="main">
+  <div class="score-top">
+    <div class="score-circle"><div class="score-n" id="sc-num">7</div><div class="score-d">/ 10</div></div>
+    <h2>Test Submitted Successfully!</h2>
+    <p>Submitted on 21/02/2026 &nbsp;|&nbsp; MBA – Final Test</p>
+    <div class="score-stats">
+      <div class="sstat"><div class="sv" id="sc-right">4</div><div class="sl">Correct</div></div>
+      <div class="sstat"><div class="sv" id="sc-wrong">1</div><div class="sl">Incorrect</div></div>
+      <div class="sstat"><div class="sv">7</div><div class="sl">Score</div></div>
+      <div class="sstat"><div class="sv">70%</div><div class="sl">Percentage</div></div>
+    </div>
+  </div>
+
+  <div class="score-qs" id="score-qs-container">
+    <!-- Populated by JS -->
+  </div>
+
+  <div style="display:flex;gap:12px;justify-content:center;margin-top:22px">
+    <button class="btn btn-g" onclick="go('pg-dashboard')">← Back to Dashboard</button>
+    <button class="btn btn-p btn-sm" onclick="showToast('🎓 Certificate downloaded!')">Download Certificate</button>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     PAGE: PROFILE
+═══════════════════════════════════════ -->
+<div id="pg-profile" class="page">
+<div class="main">
+  <div class="sec-title">User Profile</div>
+  <div class="prof-card">
+    <div class="prof-top">
+      <div class="prof-av">JD</div>
+      <div class="prof-info">
+        <h3 id="prof-display-name">John Doe</h3>
+        <p id="prof-display-email">john.doe@mba.com</p>
+        <div class="prof-badge">🔌 Offline Student · MBA Program</div>
+      </div>
+    </div>
+
+    <div class="upload-area" onclick="showToast('📷 Profile picture upload dialog would open here')">
+      <span>📸</span>
+      <p>Change Profile Picture</p>
+      <p style="font-size:11px;color:var(--light);margin-top:4px">JPG or PNG, max 2MB</p>
+    </div>
+
+    <div class="prof-rows">
+      <div class="prof-row">
+        <span class="prof-label">Full name</span>
+        <span class="prof-val" id="prof-name-val">John Doe</span>
+        <input class="prof-edit-input" id="prof-name-inp" style="display:none" value="John Doe"/>
+        <button class="prof-edit" id="prof-name-btn" onclick="editField('name')">Edit</button>
+      </div>
+      <div class="prof-row">
+        <span class="prof-label">Email address</span>
+        <span class="prof-val" id="prof-email-val">john.doe@mba.com</span>
+        <input class="prof-edit-input" id="prof-email-inp" style="display:none" value="john.doe@mba.com"/>
+        <button class="prof-edit" id="prof-email-btn" onclick="editField('email')">Edit</button>
+      </div>
+      <div class="prof-row">
+        <span class="prof-label">Program</span>
+        <span class="prof-val">MBA Program</span>
+      </div>
+      <div class="prof-row">
+        <span class="prof-label">Student Mode</span>
+        <span class="prof-val">🔌 Offline (Self-paced)</span>
+      </div>
+      <div class="prof-row">
+        <span class="prof-label">Enrolled Since</span>
+        <span class="prof-val">September 2024</span>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ── STATE ──
+var answers = {};
+var playing = false;
+var progress = 12; // seconds
+var duration = 125;
+var timerInt = null;
+var countdownInt = null;
+var countdown = 28*60+45;
+
+// ── NAVIGATION ──
+function go(pageId) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(pageId).classList.add('active');
+  const inner = ['pg-dashboard','pg-course','pg-test','pg-score','pg-profile'];
+  document.getElementById('topbar').style.display = inner.includes(pageId) ? 'block' : 'none';
+  // Update nav
+  document.querySelectorAll('.tnav-item').forEach(i => i.classList.remove('active'));
+  if(pageId === 'pg-dashboard') document.getElementById('nav-dash').classList.add('active');
+  if(pageId === 'pg-course') document.getElementById('nav-course').classList.add('active');
+  document.getElementById('av-menu').classList.remove('open');
+  window.scrollTo(0,0);
+  if(pageId === 'pg-test') startCountdown();
+}
+
+// ── LOGIN ──
+function doLogin() {
+  var e = document.getElementById('login-email').value;
+  var p = document.getElementById('login-pw').value;
+  var err = document.getElementById('login-err');
+  if(!e || !p) { err.style.display='flex'; return; }
+  err.style.display='none';
+  go('pg-dashboard');
+}
+
+// ── FORGOT PASSWORD ──
+function doForgot() {
+  var e = document.getElementById('forgot-email').value;
+  if(!e) return;
+  document.getElementById('forgot-ok').style.display='block';
+  setTimeout(()=>{ go('pg-reset'); },1800);
+}
+
+// ── AVATAR MENU ──
+function toggleMenu() {
+  document.getElementById('av-menu').classList.toggle('open');
+}
+document.addEventListener('click', function(e) {
+  if(!e.target.closest('.tav')) document.getElementById('av-menu').classList.remove('open');
+});
+
+// ── TABS (DASHBOARD) ──
+function switchTab(tab) {
+  var ov = document.getElementById('tab-overview-content');
+  var al = document.getElementById('tab-alerts-content');
+  var to = document.getElementById('tab-overview');
+  var ta = document.getElementById('tab-alerts');
+  if(tab === 'overview') {
+    ov.style.display='block'; al.style.display='none';
+    to.classList.add('active'); ta.classList.remove('active');
+  } else {
+    al.style.display='block'; ov.style.display='none';
+    ta.classList.add('active'); to.classList.remove('active');
+  }
+}
+
+// ── MODULE TOGGLE (DASHBOARD) ──
+function toggleMod(el) {
+  el.classList.toggle('open');
+}
+
+// ── SIDEBAR MODULE TOGGLE ──
+function toggleCsMod(btn) {
+  btn.parentElement.classList.toggle('open-mod');
+  var arr = btn.querySelector('.cs-mod-lock');
+  if(arr) arr.textContent = btn.parentElement.classList.contains('open-mod') ? '▾' : '▸';
+}
+
+// ── COURSE VIEWS ──
+function showView(v) {
+  ['video','done-v','study','about'].forEach(id => {
+    var el = document.getElementById('view-'+id);
+    if(el) el.style.display = 'none';
+  });
+  var target = document.getElementById('view-'+v);
+  if(target) { target.style.display = 'block'; target.style.animation = 'fi .3s ease'; }
+  // Sync sidebar active state
+  document.querySelectorAll('.cs-vid').forEach(v => v.classList.remove('active-v'));
+  if(v==='video') {
+    var vids = document.querySelectorAll('.cs-vid');
+    if(vids[5]) vids[5].classList.add('active-v'); // Module 2 Video 1
+  }
+}
+
+function lockedClick() {
+  showToast('🔒 Complete the current video first to unlock this one.');
+}
+
+// ── VIDEO PLAYER ──
+function togglePlay() {
+  playing = !playing;
+  var btn = document.getElementById('play-btn');
+  var ctrl = document.getElementById('play-ctrl');
+  if(playing) {
+    btn.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>';
+    ctrl.textContent = '⏸';
+    timerInt = setInterval(tickVideo, 1000);
+  } else {
+    btn.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg>';
+    ctrl.textContent = '▶';
+    clearInterval(timerInt);
+  }
+}
+
+function tickVideo() {
+  if(progress < duration) {
+    progress++;
+    var pct = (progress/duration*100).toFixed(1);
+    document.getElementById('seek-p').style.width = pct+'%';
+    var m = Math.floor(progress/60), s = progress%60;
+    document.getElementById('vc-time').textContent = m+':'+(s<10?'0':'')+s+' / 2:05';
+  } else {
+    clearInterval(timerInt);
+    playing = false;
+    document.getElementById('play-ctrl').textContent = '▶';
+    showToast('✅ Video complete! You can now mark it as done.');
+  }
+}
+
+function rewind() {
+  progress = Math.max(0, progress - 10);
+  var pct = (progress/duration*100).toFixed(1);
+  document.getElementById('seek-p').style.width = pct+'%';
+  var m = Math.floor(progress/60), s = progress%60;
+  document.getElementById('vc-time').textContent = m+':'+(s<10?'0':'')+s+' / 2:05';
+}
+
+function markComplete() {
+  clearInterval(timerInt);
+  playing = false;
+  showToast('🎉 Module 2 – Video 1 completed! Video 2 is now unlocked.');
+  // Visual update
+  setTimeout(()=>{
+    var vids = document.querySelectorAll('#view-video');
+    showView('done-v');
+  },1200);
+}
+
+// ── FINAL TEST ──
+function selectOpt(el, q, letter) {
+  var container = el.closest('.opts');
+  container.querySelectorAll('.opt').forEach(o => o.classList.remove('sel'));
+  el.classList.add('sel');
+  answers[q] = letter;
+  updateTestProgress();
+}
+
+function updateTestProgress() {
+  var count = Object.keys(answers).length;
+  document.getElementById('ans-count').textContent = count;
+  var dots = document.getElementById('test-dots').querySelectorAll('.tdot');
+  dots.forEach((d,i) => {
+    d.classList.remove('cur','ans');
+    if(answers[String(i+1)]) d.classList.add('ans');
+    else if(i === count && count < 5) d.classList.add('cur');
+  });
+}
+
+function submitTest() {
+  var correct = {1:'A',2:'C',3:'B',4:'A',5:'B'};
+  var marks = {1:1,2:1,3:1,4:1,5:3};
+  var score = 0;
+  var results = [];
+  [1,2,3,4,5].forEach(q => {
+    var userAns = answers[String(q)] || null;
+    var rightAns = correct[q];
+    var ok = userAns === rightAns;
+    if(ok) score += marks[q];
+    results.push({q,userAns,rightAns,ok,mark:marks[q]});
+  });
+
+  // Build score page
+  document.getElementById('sc-num').textContent = score;
+  var right = results.filter(r=>r.ok).length;
+  document.getElementById('sc-right').textContent = right;
+  document.getElementById('sc-wrong').textContent = 5-right;
+
+  var qTexts = [
+    'What does MBA stand for in the context of higher business education?',
+    'Which of the following is part of the 4Ps of Marketing?',
+    'In the context of business strategy, what does SWOT analysis stand for?',
+    'Which financial statement shows a company\'s revenues and expenses?',
+    'Which of the following best describes "Economies of Scale"?'
+  ];
+  var opts = {A:'A',B:'B',C:'C',D:'D'};
+  var ansTexts = {
+    1:{A:'Master of Business Administration',B:'Master of Basic Accounting',C:'Management by Administration',D:'Masters in Budget Analysis'},
+    2:{A:'People',B:'Profit',C:'Promotion',D:'Productivity'},
+    3:{A:'Sales, Workforce, Operations, Trends',B:'Strengths, Weaknesses, Opportunities, Threats',C:'Strategy, Workforce, Objectives, Technology',D:'Sales, Weaknesses, Opportunities, Timing'},
+    4:{A:'Income Statement',B:'Balance Sheet',C:'Cash Flow Statement',D:'Equity Statement'},
+    5:{A:'Cost per unit increases as production rises',B:'Cost per unit decreases as production increases',C:'Revenue grows proportionally with advertising',D:'Market share increases as competition decreases'}
+  };
+
+  var html = '';
+  results.forEach((r,i) => {
+    var ua = r.userAns ? ansTexts[r.q][r.userAns] : 'Not answered';
+    var ra = ansTexts[r.q][r.rightAns];
+    html += `<div class="sq-item">
+      <div class="sq-ind ${r.ok?'sq-ok':'sq-fail'}">${r.ok?'✓':'✗'}</div>
+      <div>
+        <div class="sq-q">Q${r.q}: ${qTexts[i]}</div>
+        <div class="sq-detail">Your answer: <strong>${r.userAns||'–'}: ${ua}</strong> &nbsp;|&nbsp; Correct: <strong style="color:var(--ok)">${r.rightAns}: ${ra}</strong> &nbsp;|&nbsp; <strong>${r.mark} mark${r.mark>1?'s':''}</strong></div>
+      </div>
+    </div>`;
+  });
+  document.getElementById('score-qs-container').innerHTML = html;
+
+  clearInterval(countdownInt);
+  go('pg-score');
+}
+
+function startCountdown() {
+  clearInterval(countdownInt);
+  countdown = 28*60+45;
+  countdownInt = setInterval(()=>{
+    countdown--;
+    if(countdown <= 0) { clearInterval(countdownInt); submitTest(); return; }
+    var m = Math.floor(countdown/60), s = countdown%60;
+    var el = document.getElementById('timer');
+    if(el) el.textContent = m+':'+(s<10?'0':'')+s;
+    if(countdown < 300) { if(el) el.style.color='var(--err)'; }
+  },1000);
+}
+
+// ── PROFILE ──
+var editing = {name:false, email:false};
+function editField(field) {
+  var valEl = document.getElementById('prof-'+field+'-val');
+  var inpEl = document.getElementById('prof-'+field+'-inp');
+  var btnEl = document.getElementById('prof-'+field+'-btn');
+  if(!editing[field]) {
+    editing[field] = true;
+    inpEl.value = valEl.textContent;
+    valEl.style.display='none';
+    inpEl.style.display='block';
+    btnEl.textContent='Update';
+    btnEl.style.background='var(--gold)';
+    btnEl.style.color='#fff';
+    btnEl.style.padding='6px 12px';
+    btnEl.style.borderRadius='6px';
+  } else {
+    editing[field] = false;
+    var newVal = inpEl.value.trim();
+    if(newVal) {
+      valEl.textContent = newVal;
+      if(field==='name') {
+        document.getElementById('prof-display-name').textContent = newVal;
+        document.querySelector('.tav').textContent = newVal.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+      }
+      if(field==='email') document.getElementById('prof-display-email').textContent = newVal;
+    }
+    valEl.style.display='block';
+    inpEl.style.display='none';
+    btnEl.textContent='Edit';
+    btnEl.style.background='';
+    btnEl.style.color='var(--gold)';
+    btnEl.style.padding='';
+    btnEl.style.borderRadius='';
+    showToast('✅ Profile updated successfully!');
+  }
+}
+
+// ── TOAST ──
+var toastTimer;
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.display = 'flex';
+  clearTimeout(toastTimer);
+  setTimeout(()=>t.classList.add('show'),10);
+  toastTimer = setTimeout(()=>{
+    t.classList.remove('show');
+    setTimeout(()=>t.style.display='none',300);
+  },3000);
+}
+
+// ── INIT ──
+showView('video');
+document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+document.getElementById('pg-login').classList.add('active');
+</script>
+</body>
+</html>
